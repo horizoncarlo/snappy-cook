@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" class="sl-theme-dark">
+<head>
+  <meta charset="utf-8" />
+  <title>Snappy Cook</title>
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍲</text></svg>" />
+  
+  <!-- Bring in the best font on earth -->
+  <!-- TODO <link href="https://fonts.cdnfonts.com/css/caslon-antique" rel="stylesheet"/> -->
+  
+  <!-- Shoelace components -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace/cdn/themes/dark.min.css"/>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace/cdn/shoelace-autoloader.min.js"></script>
+  
+  <!-- SimpleMDE for Markdown editing -->
+  <!--
+  <link rel="stylesheet" href="https://cdn.rawgit.com/xcatliu/simplemde-theme-dark/master/dist/simplemde-theme-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+  -->
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+  <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
+  
+  <!-- Bring in Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs/dist/cdn.min.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="./css/shoelace-override.css" />
+  <link rel="stylesheet" type="text/css" href="./css/main.css" />
+</head>
+<body x-data="state"
+      style="display: none;" x-show="bodyReady" x-transition.opacity x-transition.duration.750ms x-init="Alpine.nextTick(() => { bodyReady = true })">
+  
+  <sl-split-panel vertical="true" style="height: 100%; --divider-width: 10px; --min: 200px; --max: calc(100% - 200px);" title="Click and drag to readjust page layout">
+    <sl-icon slot="divider" name="grip-horizontal"></sl-icon>
+    <div slot="start" class="split-panel">
+      <table class="recipe-table" cellspacing="0">
+        <thead>
+          <tr>
+            <th width="10%" @click="getAllRecipes('changedDate')">Updated</th>
+            <th width="25%" @click="getAllRecipes('name')">Name <span x-text="'(' + recipes?.length + ')' "></th>
+            <template x-if="!isMobileSize()">
+              <th width="30%" @click="getAllRecipes('tags')">Tags</th>
+            </template>
+            <template x-if="!isMobileSize()">
+              <th width="30%" @click="getAllRecipes('notes')">Recipe</th>
+            </template>
+            <th width="5%">
+              <sl-button @click="resetRecipeIn($refs.htmlEditor.editor); $refs.addNewRecipe.show();">
+                <sl-icon slot="prefix" name="plus-circle"></sl-icon> Add a Meal
+              </sl-button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="recipe in recipes" :key="recipe.id">
+            <tr>
+              <td><sl-relative-time :date="recipe.changedDate" sync="true" format="narrow"></sl-relative-time></td>
+              <td x-text="recipe.name"></td>
+              <template x-if="!isMobileSize()">
+                <td x-text="recipe.tags ? recipe.tags.join(', ') : ''"></td>
+              </template>
+              <template x-if="!isMobileSize()">
+                <td>
+                  <div style="max-height: 125px; overflow-y: auto;" x-html="recipe.notes"></div>
+                </td>
+              </template>
+              <td>
+                <sl-icon-button @click="resetRecipeIn($refs.htmlEditor.editor, recipe); $refs.addNewRecipe.show();" name="pencil-square" title="Edit Recipe"></sl-icon-button>
+                &nbsp;
+                <sl-icon-button @click="deleteRecipe(recipe.id)" name="trash3" title="Delete Recipe"></sl-icon-button>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <div slot="end" class="split-panel">
+      TODO Show current week meal plan
+    </div>
+  </sl-split-panel>
+  
+  <sl-dialog x-ref="addNewRecipe" label="Add a Meal" class="addrecipe-dialog">
+    <form @submit.prevent="persistRecipe()">
+      <sl-input placeholder="Meal Name" clearable="true" required="true"
+                autocapitalize="words" autocorrect="on" autofocus="true"
+                x-model="recipeIn.name" class="field-margin-bottom"></sl-input>
+      
+      <!--
+      <div class="tags-removable">
+        <sl-tag removable>Tag 1</sl-tag>
+        <sl-tag removable>Tag 2</sl-tag>
+      </div>
+      <sl-input>
+        <span slot="prefix">
+        </span>
+      </sl-input>
+      -->
+      
+      <input id="notesIn" type="hidden" name="content" :value="recipeIn.notes"></input>
+      <div @trix-change="recipeIn.notes = event.target.value" class="field-margin-bottom">
+        <trix-editor x-ref="htmlEditor" input="notesIn"></trix-editor>
+      </div>
+      
+      <!-- <input id="notesIn" type="hidden" name="content" x-model="recipeIn.notes"></input>
+      <trix-editor input="notesIn" class="field-margin-bottom"></trix-editor> -->
+      
+      <div slot="footer">
+        <sl-button @click="$refs.addNewRecipe.hide()" type="submit" variant="primary">
+          <sl-icon slot="prefix" name="floppy"></sl-icon> Save
+        </sl-button>
+        <sl-button @click="$refs.addNewRecipe.hide()" variant="neutral">Close</sl-button>
+        <sl-button type="reset" variant="default" style="float: right;">Reset</sl-button>
+      </div>
+    </form>
+  </sl-dialog>
+  
+  <!-- Used to kludge in the import for our imperative notify-->
+  <sl-alert></sl-alert>
+  
+  <script src="./js/util.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/chef.js"></script>
+</body>
+</html>

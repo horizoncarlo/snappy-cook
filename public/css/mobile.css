@@ -1,0 +1,9 @@
+@media (max-width: 850px) { /* Mobile stuff */
+  .addrecipe-dialog {
+    --width: 100%;
+  }
+  
+  .hide-on-mobile {
+    display: none;
+  }
+}

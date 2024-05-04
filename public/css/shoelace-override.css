@@ -1,0 +1,13 @@
+/* Hide the padding/gutter added by modal dialogs so the body content doesn't shift */
+.sl-scroll-lock {
+  overflow-x: hidden !important;
+  scrollbar-gutter: auto !important;
+}
+
+/* Show the toast component in the bottom right */
+.sl-toast-stack {
+  bottom: 0 !important;
+  right: 0 !important;
+  left: auto !important;
+  top: auto !important;
+}

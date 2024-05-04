@@ -1,0 +1,16 @@
+- Create an app for my wife to store recipes and more importantly automatically meal plan
+- Add food (Name, Notes [as HTML]), multi-select checkbox for Tags
+- Manage Tags - chip list to manage, arbitrary text, no duplicates allowed
+- Table of all foods - search, sort, filter, etc.
+- Meal Plan
+  - 1 week at a time only	
+  - Choose tags for each day, so you can say "Chicken" and "Mexican" on a Tuesday, and it'll ONLY randomize between those foods
+- Authenticate is simple, just a password like old torrent downloader app. Auto-remembers login. Can view without authentication
+
+- React for work related learning?
+- Next.js too
+- Shoelace components just for some spice? Sure beats MUI
+- Try SimpleMDE for a Markdown editor (https://simplemde.com/)
+- Could use json-server and lowdb for storage?
+
+**Will have to update Thorn nginx config to allow multiple apps, but we've been wanting to do that for a while anyway**

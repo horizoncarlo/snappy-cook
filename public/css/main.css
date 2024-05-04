@@ -1,0 +1,84 @@
+/* TODO Silly font, at least without proper sizing
+:root {
+  --sl-font-sans: 'Caslon Antique', sans-serif;
+}
+
+body,
+body > * {
+  font-family: 'Caslon Antique', sans-serif;
+}
+*/
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body,
+body > * {
+  font-family: var(--sl-font-sans);
+}
+
+body {
+  overflow: hidden;
+}
+
+.addrecipe-dialog {
+  --width: 70%;
+}
+
+.split-panel {
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: scroll;
+  overflow-x: auto;
+}
+
+.field-margin-bottom {
+  margin-bottom: 10px;
+}
+
+.recipe-table {
+  width: 100%;
+}
+.recipe-table thead {
+  position: sticky;
+  top: 0;
+}
+.recipe-table thead th {
+  cursor: pointer;
+  border-bottom: 1px solid #555;
+}
+.recipe-table tr {
+  background-color: #333;
+}
+.recipe-table tr:nth-child(even) {
+  background-color: #444;
+}
+.recipe-table td {
+  outline: 1px solid #555;
+  padding: 12px;
+  color: #fff;
+}
+
+/* Trix HTML editor dark mode */
+trix-toolbar .trix-button {
+    filter: invert();
+}
+trix-editor {
+    color: white;
+}
+trix-toolbar .trix-button:disabled {
+    filter: invert() grayscale(1) brightness(2);
+}
+trix-toolbar .trix-button--icon::before {
+    opacity: 1;
+}
+trix-toolbar .trix-button--icon:disabled::before {
+    opacity: 0.5;
+}
