@@ -26,7 +26,33 @@ body {
   overflow: hidden;
 }
 
-.addrecipe-dialog {
+/* Trix HTML editor dark mode - see https://github.com/basecamp/trix/issues/947 */
+trix-toolbar .trix-button,
+.trix-dialog .trix-button-group {
+  filter: invert();
+}
+trix-editor {
+  color: white;
+}
+.trix-input--dialog,
+.trix-button--dialog {
+  color: black;
+}
+trix-toolbar .trix-button:disabled {
+  filter: invert() grayscale(1) brightness(2);
+}
+trix-toolbar .trix-button--icon::before {
+  opacity: 1;
+}
+trix-toolbar .trix-button--icon:disabled::before {
+  opacity: 0.5;
+}
+/* TODO For now hide the File Attachment button - decide if we want to handle it or not */
+trix-toolbar .trix-button-group--file-tools {
+  display: none;
+}
+
+.dialog {
   --width: 70%;
 }
 
@@ -66,19 +92,7 @@ body {
   color: #fff;
 }
 
-/* Trix HTML editor dark mode */
-trix-toolbar .trix-button {
-    filter: invert();
-}
-trix-editor {
-    color: white;
-}
-trix-toolbar .trix-button:disabled {
-    filter: invert() grayscale(1) brightness(2);
-}
-trix-toolbar .trix-button--icon::before {
-    opacity: 1;
-}
-trix-toolbar .trix-button--icon:disabled::before {
-    opacity: 0.5;
+.add-tag-input {
+  max-width: 150px;
+  display: inline-block;
 }

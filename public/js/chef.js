@@ -1,7 +1,9 @@
 var state = {
   bodyReady: false,
   recipes: [],
-  recipeIn: {}
+  recipeIn: {},
+  tags: [],
+  tagIn: '',
 }
 
 function init() {
@@ -26,7 +28,8 @@ function alpineInit() {
 }
 
 function shoelaceInit() {
-  getAllRecipes();
+  getAllRecipes('changedDate');
+  getAllTags();
 }
 
 function resetRecipeIn(htmlEditor, replaceWith) {
@@ -39,7 +42,7 @@ function resetRecipeIn(htmlEditor, replaceWith) {
       changedDate: "",
       name: "",
       notes: "",
-      tags: ""    
+      tags: []
     }
   }
   
@@ -59,7 +62,7 @@ function getAllRecipes(sortOrder) {
   });
 }
 
-function persistRecipe() {
+function persistRecipe(dialog) {
   const call = state.recipeIn.id ? updateRecipeAPI : saveRecipeAPI;
   
   console.log("Save/update recipe", state.recipeIn);
@@ -70,6 +73,10 @@ function persistRecipe() {
   call(state.recipeIn).then(res => {
     console.log("Save recipe successful", res);
     getAllRecipes();
+    
+    if (dialog) {
+      dialog.hide();
+    }
   }).catch(err => {
     notifyError("Error on saving a new meal: " + err);
     console.error(err);
@@ -87,4 +94,53 @@ function deleteRecipe(deleteId) {
     notifyError("Error on deleting a meal");
     console.error(err);
   });
+}
+
+function getAllTags() {
+  getAllTagsAPI().then(res => {
+    if (res && res.all) {
+      state.tags = res.all.sort();
+      console.log("Got all tags", state.tags);
+    }
+    else {
+      throw new Error("Invalid tag structure");
+    }
+  }).catch(err => {
+    notifyError("Error retrieving tags: " + err, "danger");
+    console.error(err);
+  });
+}
+
+function addTag(recipeObj) {
+  if (state.tagIn && state.tagIn.trim().length > 0) {
+    // TODO Check uniqueness of tags
+    // TODO Persist new tag to the API
+    state.tags.push(state.tagIn);
+    
+    // Add as a selection to our recipe
+    selectTag(recipeObj, state.tagIn);
+    
+    // Reset our tag input after
+    state.tagIn = '';
+  }
+}
+
+function selectTag(recipeObj, tag) {
+  if (recipeObj && recipeObj.tags) {
+    if (recipeObj.tags.length > 0 && recipeObj.tags.indexOf(tag) !== -1) {
+      recipeObj.tags.splice(recipeObj.tags.indexOf(tag), 1);
+    }
+    else {
+      recipeObj.tags.push(tag);
+    }
+  }
+}
+
+function deleteTag(index) {
+  // TODO Nicer looking confirm? Make a generic dialog with sl-dialog and a util function to show it?
+  if (window.confirm("Are you sure you want to delete this tag?")) {
+    // TODO Should removing a tag update all Recipes to clear it too?
+    // TODO Persist tag removal to the API
+    state.tags.splice(index, 1);
+  }
 }

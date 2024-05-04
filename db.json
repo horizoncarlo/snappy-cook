@@ -4,37 +4,43 @@
       "id": "067f",
       "name": "Testing",
       "notes": "<div>Reading but in <strong>BOLD</strong></div>",
-      "tags": "",
+      "tags": [
+        "Beef"
+      ],
       "changedDate": "2024-05-04T05:28:01.170Z"
     },
     {
       "id": "a3e4",
-      "changedDate": "2024-05-04T04:32:26.113Z",
+      "changedDate": "2024-05-04T13:46:00.792Z",
       "name": "Hey",
       "notes": "",
-      "tags": ""
+      "tags": [
+        "Fast"
+      ]
     },
     {
-      "id": "79bd",
-      "changedDate": "2024-05-04T05:28:08.662Z",
-      "name": "New stuff",
-      "notes": "<div>Hey</div>",
-      "tags": ""
+      "id": "e375",
+      "changedDate": "2024-05-04T13:47:30.108Z",
+      "name": "Tag Test",
+      "notes": "<div>Did it work?</div>",
+      "tags": [
+        "Beef",
+        "Fast",
+        "Wrong Order"
+      ]
     },
     {
-      "id": "43dc",
-      "changedDate": "2024-05-04T05:29:13.649Z",
-      "name": "Goat cheese",
-      "notes": "<div>Test</div>",
-      "tags": ""
+      "id": "e18a",
+      "changedDate": "2024-05-04T13:59:35.515Z",
+      "name": "",
+      "notes": "",
+      "tags": []
     }
   ],
   "tags": {
     "all": [
       "Beef",
-      "Fast"
-    ],
-    "meal": [
+      "Wrong Order",
       "Fast"
     ]
   },

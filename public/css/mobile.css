@@ -1,5 +1,5 @@
 @media (max-width: 850px) { /* Mobile stuff */
-  .addrecipe-dialog {
+  .dialog {
     --width: 100%;
   }
   

@@ -11,3 +11,13 @@
   left: auto !important;
   top: auto !important;
 }
+
+/* Space out our tags */
+sl-tag {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+sl-tag:hover {
+  filter: brightness(1.5);
+}

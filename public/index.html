@@ -12,19 +12,14 @@
   <!-- Shoelace components -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace/cdn/themes/dark.min.css"/>
   <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace/cdn/shoelace-autoloader.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="./css/shoelace-override.css" />
   
-  <!-- SimpleMDE for Markdown editing -->
-  <!--
-  <link rel="stylesheet" href="https://cdn.rawgit.com/xcatliu/simplemde-theme-dark/master/dist/simplemde-theme-dark.min.css">
-  <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-  -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
   <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
   
   <!-- Bring in Alpine.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs/dist/cdn.min.js"></script>
   
-  <link rel="stylesheet" type="text/css" href="./css/shoelace-override.css" />
   <link rel="stylesheet" type="text/css" href="./css/main.css" />
 </head>
 <body x-data="state"
@@ -33,6 +28,7 @@
   <sl-split-panel vertical="true" style="height: 100%; --divider-width: 10px; --min: 200px; --max: calc(100% - 200px);" title="Click and drag to readjust page layout">
     <sl-icon slot="divider" name="grip-horizontal"></sl-icon>
     <div slot="start" class="split-panel">
+      <!-- TODO Do little bubbles or cards for each recipe instead of a table? Could be a better paradigm available if we think about it for a bit, especially for mobile -->
       <table class="recipe-table" cellspacing="0">
         <thead>
           <tr>
@@ -45,7 +41,7 @@
               <th width="30%" @click="getAllRecipes('notes')">Recipe</th>
             </template>
             <th width="5%">
-              <sl-button @click="resetRecipeIn($refs.htmlEditor.editor); $refs.addNewRecipe.show();">
+              <sl-button @click="resetRecipeIn($refs.htmlEditor.editor); $refs.manageRecipe.show();">
                 <sl-icon slot="prefix" name="plus-circle"></sl-icon> Add a Meal
               </sl-button>
             </th>
@@ -65,7 +61,7 @@
                 </td>
               </template>
               <td>
-                <sl-icon-button @click="resetRecipeIn($refs.htmlEditor.editor, recipe); $refs.addNewRecipe.show();" name="pencil-square" title="Edit Recipe"></sl-icon-button>
+                <sl-icon-button @click="resetRecipeIn($refs.htmlEditor.editor, recipe); $refs.manageRecipe.show();" name="pencil-square" title="Edit Recipe"></sl-icon-button>
                 &nbsp;
                 <sl-icon-button @click="deleteRecipe(recipe.id)" name="trash3" title="Delete Recipe"></sl-icon-button>
               </td>
@@ -74,42 +70,46 @@
         </tbody>
       </table>
     </div>
+    
     <div slot="end" class="split-panel">
       TODO Show current week meal plan
     </div>
   </sl-split-panel>
   
-  <sl-dialog x-ref="addNewRecipe" label="Add a Meal" class="addrecipe-dialog">
-    <form @submit.prevent="persistRecipe()">
+  <sl-dialog x-ref="manageRecipe" label="Add a Meal" class="dialog">
+    <!-- TODO Currently the Alpine.js @submit is overriding the client side validation of Shoelace, so we need to remedy -->
+    <form @submit.prevent="persistRecipe($refs.manageRecipe)">
       <sl-input placeholder="Meal Name" clearable="true" required="true"
-                autocapitalize="words" autocorrect="on" autofocus="true"
+                autocapitalize="words" autocorrect="on"
                 x-model="recipeIn.name" class="field-margin-bottom"></sl-input>
-      
-      <!--
-      <div class="tags-removable">
-        <sl-tag removable>Tag 1</sl-tag>
-        <sl-tag removable>Tag 2</sl-tag>
-      </div>
-      <sl-input>
-        <span slot="prefix">
-        </span>
-      </sl-input>
-      -->
       
       <input id="notesIn" type="hidden" name="content" :value="recipeIn.notes"></input>
       <div @trix-change="recipeIn.notes = event.target.value" class="field-margin-bottom">
         <trix-editor x-ref="htmlEditor" input="notesIn"></trix-editor>
       </div>
       
-      <!-- <input id="notesIn" type="hidden" name="content" x-model="recipeIn.notes"></input>
-      <trix-editor input="notesIn" class="field-margin-bottom"></trix-editor> -->
+      <div class="field-margin-bottom">
+        Tags:
+        <sl-input placeholder="New Tag" pill autocapitalize="words" autocorrect="on"
+                  x-model="tagIn" class="add-tag-input">
+          <sl-icon name="plus-circle" slot="suffix"
+                   @click="addTag(recipeIn)"></sl-icon>
+        </sl-input>
+        <template x-for="(tag, index) in tags" :key="tag">
+          <sl-tag removable pill size="large" x-text="tag"
+                  @sl-remove="deleteTag(index)"
+                  @click="selectTag(recipeIn, tag)"
+                  :variant="recipeIn.tags.indexOf(tag) === -1 ? 'neutral' : 'primary'"></sl-tag>
+        </template>
+      </div>
       
       <div slot="footer">
-        <sl-button @click="$refs.addNewRecipe.hide()" type="submit" variant="primary">
+        <sl-button type="submit" variant="primary">
           <sl-icon slot="prefix" name="floppy"></sl-icon> Save
         </sl-button>
-        <sl-button @click="$refs.addNewRecipe.hide()" variant="neutral">Close</sl-button>
-        <sl-button type="reset" variant="default" style="float: right;">Reset</sl-button>
+        <sl-button @click="$refs.manageRecipe.hide()" variant="neutral">Close</sl-button>
+        <sl-button type="reset" variant="default" style="float: right;"
+                   @click="recipeIn.tags.length = 0">Reset</sl-button>
       </div>
     </form>
   </sl-dialog>
