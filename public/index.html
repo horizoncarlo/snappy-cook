@@ -32,17 +32,18 @@
       <table class="recipe-table" cellspacing="0">
         <thead>
           <tr>
-            <th width="10%" @click="getAllRecipes('changedDate')">Updated</th>
-            <th width="25%" @click="getAllRecipes('name')">Name <span x-text="'(' + recipes?.length + ')' "></th>
+            <th @click="getAllRecipes('name')">Name <span x-text="'(' + recipes?.length + ')' "></th>
+            <th @click="getAllRecipes('tags')">Tags</th>
             <template x-if="!isMobileSize()">
-              <th width="30%" @click="getAllRecipes('tags')">Tags</th>
+              <th @click="getAllRecipes('notes')">Recipe</th>
             </template>
             <template x-if="!isMobileSize()">
-              <th width="30%" @click="getAllRecipes('notes')">Recipe</th>
+              <th @click="getAllRecipes('changedDate')">Updated</th>
             </template>
-            <th width="5%">
+            <th width="100px">
+              <!-- TODO Add a global search (by Name/Tags automatically) -->
               <sl-button @click="resetRecipeIn($refs.htmlEditor.editor); $refs.manageRecipe.show();">
-                <sl-icon slot="prefix" name="plus-circle"></sl-icon> Add a Meal
+                <sl-icon slot="prefix" name="plus-circle"></sl-icon> New
               </sl-button>
             </th>
           </tr>
@@ -50,17 +51,18 @@
         <tbody>
           <template x-for="recipe in recipes" :key="recipe.id">
             <tr>
-              <td><sl-relative-time :date="recipe.changedDate" sync="true" format="narrow"></sl-relative-time></td>
               <td x-text="recipe.name"></td>
-              <template x-if="!isMobileSize()">
-                <td x-text="recipe.tags ? recipe.tags.join(', ') : ''"></td>
-              </template>
+              <td x-text="recipe.tags ? recipe.tags.join(', ') : ''" class="tag-col"></td>
               <template x-if="!isMobileSize()">
                 <td>
-                  <div style="max-height: 125px; overflow-y: auto;" x-html="recipe.notes"></div>
+                  <div class="notes-wrap" x-html="recipe.notes"></div>
                 </td>
               </template>
-              <td>
+              <template x-if="!isMobileSize()">
+                <td><sl-relative-time :date="recipe.changedDate" sync="true" format="narrow"></sl-relative-time></td>
+              </template>
+              <td class="center">
+                <!-- TODO Touch and hold to edit on mobile -->
                 <sl-icon-button @click="resetRecipeIn($refs.htmlEditor.editor, recipe); $refs.manageRecipe.show();" name="pencil-square" title="Edit Recipe"></sl-icon-button>
                 &nbsp;
                 <sl-icon-button @click="deleteRecipe(recipe.id)" name="trash3" title="Delete Recipe"></sl-icon-button>
@@ -76,7 +78,7 @@
     </div>
   </sl-split-panel>
   
-  <sl-dialog x-ref="manageRecipe" label="Add a Meal" class="dialog">
+  <sl-dialog x-ref="manageRecipe" label="Create a New Meal" class="dialog">
     <!-- TODO Currently the Alpine.js @submit is overriding the client side validation of Shoelace, so we need to remedy -->
     <form @submit.prevent="persistRecipe($refs.manageRecipe)">
       <sl-input placeholder="Meal Name" clearable="true" required="true"
@@ -95,6 +97,9 @@
           <sl-icon name="plus-circle" slot="suffix"
                    @click="addTag(recipeIn)"></sl-icon>
         </sl-input>
+        <template x-if="isMobileSize()">
+          <br/>
+        </template>
         <template x-for="(tag, index) in tags" :key="tag">
           <sl-tag removable pill size="large" x-text="tag"
                   @sl-remove="deleteTag(index)"

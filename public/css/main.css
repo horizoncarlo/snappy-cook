@@ -47,6 +47,11 @@ trix-toolbar .trix-button--icon::before {
 trix-toolbar .trix-button--icon:disabled::before {
   opacity: 0.5;
 }
+/* Hide the nesting level buttons as they are rarely used and take up needless space on mobile  */
+trix-toolbar .trix-button--icon-decrease-nesting-level,
+trix-toolbar .trix-button--icon-increase-nesting-level {
+  display: none;
+}
 /* TODO For now hide the File Attachment button - decide if we want to handle it or not */
 trix-toolbar .trix-button-group--file-tools {
   display: none;
@@ -54,6 +59,10 @@ trix-toolbar .trix-button-group--file-tools {
 
 .dialog {
   --width: 70%;
+}
+
+.center {
+  text-align: center;
 }
 
 .split-panel {
@@ -90,6 +99,11 @@ trix-toolbar .trix-button-group--file-tools {
   outline: 1px solid #555;
   padding: 12px;
   color: #fff;
+}
+
+.notes-wrap {
+  max-height: 125px;
+  overflow-y: auto;
 }
 
 .add-tag-input {

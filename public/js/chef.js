@@ -28,7 +28,7 @@ function alpineInit() {
 }
 
 function shoelaceInit() {
-  getAllRecipes('changedDate');
+  getAllRecipes('', true);
   getAllTags();
 }
 
@@ -47,7 +47,7 @@ function resetRecipeIn(htmlEditor, replaceWith) {
   }
   
   if (htmlEditor) {
-    // TODO Probably don't get easily XSS attacked, so parse/cleanup HTML first?
+    // TODO Don't get easily XSS attacked, so parse/cleanup HTML first with something like sanitize-html?
     htmlEditor.loadHTML(state.recipeIn?.notes);
   }
 }
@@ -84,6 +84,10 @@ function persistRecipe(dialog) {
 }
 
 function deleteRecipe(deleteId) {
+  if (!window.confirm("Are you sure you want to delete this recipe?")) {
+    return;
+  }
+  
   console.log("Delete recipe", deleteId);
   
   deleteRecipeAPI(deleteId).then(res => {
@@ -113,7 +117,14 @@ function getAllTags() {
 
 function addTag(recipeObj) {
   if (state.tagIn && state.tagIn.trim().length > 0) {
-    // TODO Check uniqueness of tags
+    // Check uniqueness of desired tag
+    const duplicates = state.tags.filter((tag => tag && tag.toLowerCase() === state.tagIn.toLowerCase()));
+    if (duplicates && duplicates.length > 0) {
+      notify("Tag <b>" + state.tagIn + "</b> already exists", 'warning');
+      state.tagIn = '';
+      return;
+    }
+    
     // TODO Persist new tag to the API
     state.tags.push(state.tagIn);
     

@@ -3,6 +3,10 @@
     --width: 100%;
   }
   
+  .tag-col {
+    font-size: 80%;
+  }
+  
   .hide-on-mobile {
     display: none;
   }

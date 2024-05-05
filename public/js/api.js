@@ -43,21 +43,28 @@ async function getAllTagsAPI() {
   return _get(API_URL + 'tags');
 }
 
-let lastSortCol = 'changedDate';
-let lastSortOrder = '-';
-async function getAllRecipesAPI(sortCol) {
+let lastSortCol = 'name';
+let lastSortOrder = ''; // Ascending sort, descending is '-'
+async function getAllRecipesAPI(sortCol, initSort) {
   let apiEndpoint = 'recipes';
   
-  // TTODO Clean up this messy sorting, given init sorting vs column - we don't want changedDate sort to reverse when deleting a recipe and refetching the list, but we want asc/desc to toggle on manual column sort
+  // If we don't have a sort, default to our last
   if (typeof sortCol !== 'string' || sortCol.trim().length === 0) {
     sortCol = lastSortCol;
   }
-  
-  if (sortCol !== lastSortCol) {
-    // TODO Used to use this but no longer working, see https://github.com/typicode/json-server/issues/1498: + '&_order=' + lastSortOrder;
-    lastSortOrder = lastSortOrder === '' ? '-' : '';
+  else if (sortCol === lastSortCol) {
+    if (!initSort) { // Don't toggle our sort on any programmatic init, non-user driven sort
+      lastSortOrder = lastSortOrder === '' ? '-' : '';
+    }
+  }
+  // By default is switching the sort column revert to ascending
+  // Unless of course we're doing changedDate, which is hardcoded special case to be descending
+  else {
+    lastSortOrder = sortCol === 'changedDate' ? '-' : '';
   }
   lastSortCol = sortCol;
+  
+  // TODO Used to use this but no longer working, see https://github.com/typicode/json-server/issues/1498: + '&_order=' + lastSortOrder;
   apiEndpoint += '?_sort=' + lastSortOrder + sortCol;
   
   return _get(API_URL + apiEndpoint);
