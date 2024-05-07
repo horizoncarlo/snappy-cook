@@ -127,7 +127,7 @@
     
     <div class="field-margin-bottom">
       <sl-icon name="bookmarks"></sl-icon>&nbsp;Tags:
-      <sl-input placeholder="New Tag" pill autocapitalize="words" autocorrect="on"
+      <sl-input placeholder="Add Tag" pill autocapitalize="words" autocorrect="on"
                 x-model="tagIn" class="add-tag-input"
                 @keyup.enter="addTag(recipeIn)">
         <sl-icon name="plus-circle" slot="suffix"
@@ -155,12 +155,12 @@
   
   <sl-dialog x-ref="manageTags" :label="'Manage Tags for ' + dayIn.dayName + ' (' + dayIn.tags?.length + ' Tags)'" class="dialog">
     <sl-icon name="bookmarks"></sl-icon>&nbsp;Tags:
-    <sl-input placeholder="New Tag" pill :autofocus="!isMobileSize()"
+    <sl-input placeholder="Add Tag" pill :autofocus="!isMobileSize()"
               autocapitalize="words" autocorrect="on"
               x-model="tagIn" class="add-tag-input"
-              @keyup.enter="addTag()">
+              @keyup.enter="addTag(dayIn)">
       <sl-icon name="plus-circle" slot="suffix"
-               @click="addTag()"></sl-icon>
+               @click="addTag(dayIn)"></sl-icon>
     </sl-input>
     <template x-if="isMobileSize()">
       <br/>

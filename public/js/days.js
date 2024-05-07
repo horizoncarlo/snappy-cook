@@ -98,7 +98,9 @@ function redoDay(day, isRedone, persistAfter) {
 
 function persistDay(day, dialog) {
   // If we're updating our state day, which means we're editing Tags, put the changes back into state
-  if (day === state.dayIn) {
+  if (day === state.dayIn ||
+      (day.id && state.dayIn.id && day.id === state.dayIn.id)) {
+    state.dayIn = day;
     state.week[state.dayIn.index] = state.dayIn;
   }
   
