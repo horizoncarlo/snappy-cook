@@ -1,46 +1,52 @@
 {
   "recipes": [
     {
-      "id": "067f",
-      "name": "Testing",
-      "notes": "<div>Reading but in <strong>BOLD aaa</strong></div>",
+      "id": "9889",
+      "changedDate": "2024-05-07T22:07:17.169Z",
+      "name": "Ramen Noodles",
+      "notes": "<div>Cook some ramen, maybe throw in an egg or green onions.</div>",
       "tags": [
-        "Boiled",
-        "Fast"
-      ],
-      "changedDate": "2024-05-07T04:44:45.328Z"
-    },
-    {
-      "id": "a3e4",
-      "changedDate": "2024-05-07T02:44:26.560Z",
-      "name": "Hey",
-      "notes": "",
-      "tags": [
-        "Goat",
-        "Boiled",
-        "Fast",
-        "Salad"
+        "Inexpensive"
       ]
     },
     {
-      "id": "e375",
-      "changedDate": "2024-05-07T04:25:57.468Z",
-      "name": "Tag Test",
-      "notes": "<div>Did it work?</div>",
+      "id": "bc9d",
+      "changedDate": "2024-05-07T22:07:38.092Z",
+      "name": "Boiled Chicken",
+      "notes": "<div>Really awful and flavorless.</div>",
       "tags": [
-        "Salad",
-        "Fast"
+        "Chicken"
+      ]
+    },
+    {
+      "id": "577c",
+      "changedDate": "2024-05-07T22:08:38.992Z",
+      "name": "Fish Tacos with lime",
+      "notes": "<div>Tilapia for us or mahi-mahi for guests</div>",
+      "tags": [
+        "Taco",
+        "Frozen",
+        "Basement Fridge"
+      ]
+    },
+    {
+      "id": "5a48",
+      "changedDate": "2024-05-07T22:09:15.906Z",
+      "name": "Bell Peppers with fried chicken salad",
+      "notes": "",
+      "tags": [
+        "Chicken",
+        "Inexpensive"
       ]
     }
   ],
   "tags": {
     "all": [
-      "Boiled",
-      "Fast",
-      "Flash",
-      "Goat",
-      "Salad",
-      "Slow Cooker"
+      "Basement Fridge",
+      "Chicken",
+      "Frozen",
+      "Inexpensive",
+      "Taco"
     ]
   },
   "days": [
@@ -48,63 +54,66 @@
       "id": "ewd1",
       "dayName": "Thursday",
       "dayNumber": 9,
-      "recipeId": "e375",
+      "recipeId": "bc9d",
       "tags": [
-        "Salad",
-        "Goat"
-      ]
+        "Frozen",
+        "Chicken",
+        "Basement Fridge"
+      ],
+      "index": 2
     },
     {
       "id": "0d69",
       "dayName": "Wednesday",
       "dayNumber": 8,
-      "recipeId": "a3e4",
-      "tags": [
-        "Boiled",
-        "Flash",
-        "Goat"
-      ]
+      "recipeId": "9889",
+      "tags": [],
+      "index": 1
     },
     {
       "id": "09fc",
       "dayName": "Tuesday",
       "dayNumber": 7,
-      "recipeId": "a3e4",
-      "tags": [
-        "Boiled",
-        "Fast"
-      ]
+      "recipeId": "577c",
+      "tags": [],
+      "index": 0
     },
     {
       "id": "a5e2",
       "dayName": "Friday",
       "dayNumber": 10,
-      "recipeId": "e375",
-      "tags": [
-        "Boiled",
-        "Fast"
-      ]
+      "recipeId": "577c",
+      "tags": [],
+      "index": 3
     },
     {
       "id": "4ea6",
       "dayName": "Saturday",
       "dayNumber": 11,
-      "recipeId": "e375",
-      "tags": []
+      "recipeId": "5a48",
+      "tags": [
+        "Taco",
+        "Inexpensive"
+      ],
+      "index": 4
     },
     {
       "id": "add7",
       "dayName": "Sunday",
       "dayNumber": 12,
-      "recipeId": "e375",
-      "tags": []
+      "recipeId": "bc9d",
+      "tags": [],
+      "index": 5
     },
     {
       "id": "92a4",
       "dayName": "Monday",
       "dayNumber": 13,
-      "recipeId": "a3e4",
-      "tags": []
+      "recipeId": "577c",
+      "tags": [
+        "Basement Fridge"
+      ],
+      "index": 6
     }
   ]
 }

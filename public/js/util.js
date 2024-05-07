@@ -2,31 +2,6 @@ function isAlpineReady() {
   return typeof Alpine === 'object';
 }
 
-function safeNum(val) {
-  // Return 0 if our number is undefined
-  return typeof val === 'number' ? val : 0;
-}
-
-function getLocalStorageItem(key) {
-  return window.localStorage.getItem(key);
-}
-
-function getLocalStorageBoolean(key, optionalDefault) {
-  const fromStorage = window.localStorage.getItem(key);
-  if (!fromStorage && typeof optionalDefault !== 'undefined') {
-    return optionalDefault;
-  }
-  return fromStorage && fromStorage === 'true' ? true : false;
-}
-
-function setLocalStorageItem(key, value) {
-  window.localStorage.setItem(key, value);
-}
-
-function removeLocalStorageItem(key) {
-  window.localStorage.removeItem(key);
-}
-
 function randomColor() {
   const letters = '0123456789ABCDEF';
   let color = '#';
@@ -35,10 +10,6 @@ function randomColor() {
   }
   
   return color;
-}
-
-function randomDegrees() {
-  return randomRange(0, 360) + 'deg';
 }
 
 function randomRange(min, max) {
@@ -57,10 +28,6 @@ function randomRange(min, max) {
 
 function isMobileSize() {
   return window.matchMedia("(max-width: 850px)").matches;
-}
-
-function cloneObject(obj) {
-  return Object.assign({}, obj);
 }
 
 function addCSSLink(id, href) {

@@ -6,14 +6,12 @@
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍲</text></svg>" />
   
-  <!-- Bring in the best font on earth -->
-  <!-- TODO <link href="https://fonts.cdnfonts.com/css/caslon-antique" rel="stylesheet"/> -->
-  
   <!-- Shoelace components -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace/cdn/themes/dark.min.css"/>
   <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace/cdn/shoelace-autoloader.min.js"></script>
   <link rel="stylesheet" type="text/css" href="./css/shoelace-override.css" />
   
+  <!-- Trix HTML editor -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
   <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
   
@@ -33,7 +31,7 @@
         <thead>
           <tr>
             <th @click="getAllRecipes('name')">Name <span x-text="'(' + recipes?.length + ')' "></span></th>
-            <th @click="getAllRecipes('tags')">
+            <th @click="getAllRecipes('tags', $event)">
               <sl-input x-model="searchIn" class="search-input"
                         :placeholder="'Search' + (isMobileSize() ? '' : ' Name and Tags') + '...'"
                         clearable="true" autocorrect="on"></sl-input>
@@ -45,7 +43,7 @@
               <th @click="getAllRecipes('changedDate')">Updated</th>
             </template>
             <th width="100px">
-              <sl-button @click="resetRecipeIn($refs.htmlEditor.editor); $refs.manageRecipe.show();">
+              <sl-button @click="resetRecipeIn($refs.htmlEditor.editor); $refs.manageRecipe.show();" title="Create a new meal">
                 <sl-icon slot="prefix" name="plus-circle"></sl-icon> New
               </sl-button>
             </th>
@@ -68,7 +66,7 @@
               <td class="center">
                 <sl-icon-button @click="resetRecipeIn($refs.htmlEditor.editor, recipe); $refs.manageRecipe.show();" name="pencil-square" title="Edit Recipe"></sl-icon-button>
                 &nbsp;
-                <sl-icon-button @click="deleteRecipe(recipe.id)" name="trash3" title="Delete Recipe"></sl-icon-button>
+                <sl-icon-button @click="deleteRecipe(recipe.id)" name="trash3" title="Delete Recipe" :loading="loading"></sl-icon-button>
               </td>
             </tr>
           </template>
@@ -87,7 +85,9 @@
       </div>
       <template x-for="day in week" :key="day.dayNumber">
         <div class="week-day">
-          <div x-text="day.dayNumber + ' ' + day.dayName" class="day-header" :class="{ 'day-current': new Date().getDate() == day.dayNumber}"></div>
+          <div x-text="day.dayNumber + ' ' + day.dayName"
+               class="day-header" :class="{ 'day-current': new Date().getDate() == day.dayNumber}"
+               :style="'text-decoration-color: ' + randomColor()"></div>
           <select x-model="day.recipeId" class="day-drop" @change.debounce.1000ms="persistDay(day)">
             <option :key="''" :value="''">-- Select --</option>
             <template x-for="recipe in recipes">
@@ -117,6 +117,7 @@
     <sl-input placeholder="Meal Name" clearable="true" required="true"
               autocapitalize="words" autocorrect="on"
               :autofocus="!isMobileSize()"
+              @keyup.enter="persistRecipe($refs.manageRecipe)"
               x-model="recipeIn.name" class="field-margin-bottom"></sl-input>
     
     <input id="notesIn" type="hidden" name="content" :value="recipeIn.notes"></input>
@@ -127,7 +128,8 @@
     <div class="field-margin-bottom">
       <sl-icon name="bookmarks"></sl-icon>&nbsp;Tags:
       <sl-input placeholder="New Tag" pill autocapitalize="words" autocorrect="on"
-                x-model="tagIn" class="add-tag-input">
+                x-model="tagIn" class="add-tag-input"
+                @keyup.enter="addTag(recipeIn)">
         <sl-icon name="plus-circle" slot="suffix"
                   @click="addTag(recipeIn)"></sl-icon>
       </sl-input>
@@ -145,7 +147,7 @@
     <div slot="footer">
       <sl-button type="reset" variant="default" class="fleft"
                  @click="recipeIn.tags.length = 0">Reset</sl-button>
-      <sl-button @click="persistRecipe($refs.manageRecipe)" variant="primary">
+      <sl-button @click="persistRecipe($refs.manageRecipe)" variant="primary" :loading="loading">
         <sl-icon slot="prefix" name="floppy"></sl-icon> Save
       </sl-button>
     </div>
@@ -153,9 +155,10 @@
   
   <sl-dialog x-ref="manageTags" :label="'Manage Tags for ' + dayIn.dayName + ' (' + dayIn.tags?.length + ' Tags)'" class="dialog">
     <sl-icon name="bookmarks"></sl-icon>&nbsp;Tags:
-    <!--TODO Use this on various inputs to handle the Enter key: @keyup.enter= -->
-    <sl-input placeholder="New Tag" pill autocapitalize="words" autocorrect="on"
-              x-model="tagIn" class="add-tag-input">
+    <sl-input placeholder="New Tag" pill :autofocus="!isMobileSize()"
+              autocapitalize="words" autocorrect="on"
+              x-model="tagIn" class="add-tag-input"
+              @keyup.enter="addTag()">
       <sl-icon name="plus-circle" slot="suffix"
                @click="addTag()"></sl-icon>
     </sl-input>
@@ -172,7 +175,7 @@
     <div slot="footer">
       <sl-button type="reset" variant="default" class="fleft"
                  @click="dayIn.tags.length = 0">Reset</sl-button>
-      <sl-button variant="primary" @click="persistDay(dayIn); $refs.manageTags.hide()">
+      <sl-button variant="primary" @click="persistDay(dayIn, $refs.manageTags)" :loading="loading">
         <sl-icon slot="prefix" name="floppy"></sl-icon> Save
       </sl-button>
     </div>
@@ -181,8 +184,12 @@
   <!-- Used to kludge in the import for our imperative notify-->
   <sl-alert></sl-alert>
   
+  <!-- All our split scripts -->
   <script src="./js/util.js"></script>
   <script src="./js/api.js"></script>
+  <script src="./js/days.js"></script>
+  <script src="./js/tags.js"></script>
+  <script src="./js/recipes.js"></script>
   <script src="./js/chef.js"></script>
 </body>
 </html>

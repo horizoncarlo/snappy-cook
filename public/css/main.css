@@ -1,14 +1,3 @@
-/* TODO Silly font, at least without proper sizing
-:root {
-  --sl-font-sans: 'Caslon Antique', sans-serif;
-}
-
-body,
-body > * {
-  font-family: 'Caslon Antique', sans-serif;
-}
-*/
-
 html,
 body {
   margin: 0;
@@ -52,7 +41,7 @@ trix-toolbar .trix-button--icon-decrease-nesting-level,
 trix-toolbar .trix-button--icon-increase-nesting-level {
   display: none;
 }
-/* TODO For now hide the File Attachment button - decide if we want to handle it or not */
+/* Hide the file attachment button as we're just dealing with text (for now?) */
 trix-toolbar .trix-button-group--file-tools {
   display: none;
 }
@@ -144,12 +133,15 @@ trix-toolbar .trix-button-group--file-tools {
 .day-header {
   text-align: center;
   font-size: 110%;
-  text-decoration: underline;
+  text-decoration-line: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-style: dotted;
   margin-top: 10px;
+  text-shadow: 0 0 5px black;
 }
 
 .day-current {
-  color: yellow;
+  font-weight: bold;
 }
 .day-current::after {
   content: ' (today)';

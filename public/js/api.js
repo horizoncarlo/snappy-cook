@@ -1,43 +1,34 @@
-// TODO Probably wrap our json-server in Node for better middleware and security and just cause raw dogging json-server on a deploy seems a bit wild
 const API_URL = `http://${window.location.host}/`;
 
-async function _get(url) {
-  const response = await fetch(url);
-  if (response.ok) {
-    return await response.json();
-  }
-  return Promise.reject(response.status + ": " + response.statusText);
-}
+// #region Generic underlying functions
+function _get(url) { return _fetchWithLoading(url, 'GET'); }
+function _post(url, body) { return _fetchWithLoading(url, 'POST', JSON.stringify(body)); }
+function _put(url, body) { return _fetchWithLoading(url, 'PUT', JSON.stringify(body)); }
+function _delete(url) { return _fetchWithLoading(url, 'DELETE'); }
 
-async function _post(url, body) {
-  const response = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify(body)
-  });
-  if (response.ok) {
-    return await response.json();
+async function _fetchWithLoading(url, method, body) {
+  state.loading = true;
+  try {
+    const options = {
+      method: method ?? 'GET'
+    };
+    if (body) {
+      options.body = body;
+    }
+    
+    const response = await fetch(url, options);
+    if (response.ok) {
+      return response.json();
+    }
+    
+    throw new Error(response.status + ": " + response.statusText);
+  } catch (error) {
+    throw error;
+  } finally {
+    state.loading = false;
   }
-  return Promise.reject(response.status + ": " + response.statusText);
 }
-
-async function _put(url, body) {
-  const response = await fetch(url, {
-    method: "PUT",
-    body: JSON.stringify(body)
-  });
-  if (response.ok) {
-    return await response.json();
-  }
-  return Promise.reject(response.status + ": " + response.statusText);
-}
-
-async function _delete(url) {
-  const response = await fetch(url, { method: "DELETE" });
-  if (response.ok) {
-    return await response.json();
-  }
-  return Promise.reject(response.status + ": " + response.statusText);
-}
+// #endregion
 
 async function getAllTagsAPI() {
   return _get(API_URL + 'tags');
@@ -68,9 +59,7 @@ async function getAllRecipesAPI(sortCol, initSort) {
   }
   lastSortCol = sortCol;
   
-  // TODO Used to use this but no longer working, see https://github.com/typicode/json-server/issues/1498: + '&_order=' + lastSortOrder;
   apiEndpoint += '?_sort=' + lastSortOrder + sortCol;
-  
   return _get(API_URL + apiEndpoint);
 }
 
