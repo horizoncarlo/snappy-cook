@@ -39,6 +39,7 @@ function shoelaceInit() {
 
 function setupWeekdays() {
   state.week = Array(7).fill().map(() => ({
+    id: -1,
     dayName: '',
     dayNumber: 0,
     recipe: '',
@@ -47,6 +48,7 @@ function setupWeekdays() {
   
   let today = new Date();
   for (let i = 0; i < state.week.length; i++) {
+    state.week[i].id = i;
     state.week[i].dayName =
       today.toLocaleDateString('en', {
         weekday: 'long'
@@ -213,17 +215,42 @@ function matchesSearch(recipeObj, searchText) {
   return true;
 }
 
+function persistDay() {
+  state.week.forEach((day, index) => {
+    if (day.id === state.dayIn.id) {
+      state.week[index] = state.dayIn;
+    }
+  });
+  
+  // TTODO Save to db
+}
+
 function redoWeek() {
   state.week.map(day => {
     redoDay(day);
   });
 }
 
-function redoDay(day) {
-  // TTODO Filter by tags here
-  // TTODO Don't allow the last day to be randomly chosen again
-  const randIndex = randomRange(0, state.recipes.length-1);
-  day.recipe = state.recipes[randIndex].id;
+function redoDay(day, isRedone) {
+  let possibleRecipes = [];
+  if (day.tags.length > 0) {
+    possibleRecipes = state.recipes.filter(recipe => {
+      return day.tags.some(tag => recipe.tags.includes(tag));
+    });
+  }
+  else {
+    possibleRecipes = state.recipes;
+  }
+  
+  const randIndex = randomRange(0, possibleRecipes.length-1);
+  newRecipeId = possibleRecipes[randIndex].id;
+  
+  // If we get the same recipe roll again, to try to avoid repetition a little bit
+  if (newRecipeId === day.recipe && !isRedone) {
+    return redoDay(day, true);
+  }
+  
+  day.recipe = newRecipeId;
 }
 
 function changeDayRecipe(e) {

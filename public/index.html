@@ -170,7 +170,7 @@
     
     <div slot="footer">
       <!-- TTODO Save days properly with tags -->
-      <sl-button variant="primary">
+      <sl-button variant="primary" @click="persistDay(); $refs.manageTags.hide()">
         <sl-icon slot="prefix" name="floppy"></sl-icon> Save
       </sl-button>
     </div>
