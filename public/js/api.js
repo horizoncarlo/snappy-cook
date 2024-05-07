@@ -70,8 +70,12 @@ async function getAllRecipesAPI(sortCol, initSort) {
   return _get(API_URL + apiEndpoint);
 }
 
-async function saveRecipeAPI(recipe) {
+async function createRecipeAPI(recipe) {
   return _post(API_URL + 'recipes', recipe);
+}
+
+async function updateTagsAPI(tags) {
+  return _put(API_URL + 'tags', { all: tags });
 }
 
 async function updateRecipeAPI(recipe) {

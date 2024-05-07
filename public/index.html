@@ -28,12 +28,15 @@
   <sl-split-panel vertical="true" style="height: 100%; --divider-width: 10px; --min: 200px; --max: calc(100% - 200px);" title="Click and drag to readjust page layout">
     <sl-icon slot="divider" name="grip-horizontal"></sl-icon>
     <div slot="start" class="split-panel">
-      <!-- TODO Do little bubbles or cards for each recipe instead of a table? Could be a better paradigm available if we think about it for a bit, especially for mobile -->
       <table class="recipe-table" cellspacing="0">
         <thead>
           <tr>
-            <th @click="getAllRecipes('name')">Name <span x-text="'(' + recipes?.length + ')' "></th>
-            <th @click="getAllRecipes('tags')">Tags</th>
+            <th @click="getAllRecipes('name')">Name <span x-text="'(' + recipes?.length + ')' "></span></th>
+            <th @click="getAllRecipes('tags')">
+              <sl-input x-model="searchIn" class="search-input"
+                        :placeholder="'Search' + (isMobileSize() ? '' : ' Name and Tags') + '...'"
+                        clearable="true" autocorrect="on"></sl-input>
+            </th>
             <template x-if="!isMobileSize()">
               <th @click="getAllRecipes('notes')">Recipe</th>
             </template>
@@ -41,7 +44,6 @@
               <th @click="getAllRecipes('changedDate')">Updated</th>
             </template>
             <th width="100px">
-              <!-- TODO Add a global search (by Name/Tags automatically) -->
               <sl-button @click="resetRecipeIn($refs.htmlEditor.editor); $refs.manageRecipe.show();">
                 <sl-icon slot="prefix" name="plus-circle"></sl-icon> New
               </sl-button>
@@ -50,7 +52,7 @@
         </thead>
         <tbody>
           <template x-for="recipe in recipes" :key="recipe.id">
-            <tr>
+            <tr x-show="matchesSearch(recipe, searchIn)">
               <td x-text="recipe.name"></td>
               <td x-text="recipe.tags ? recipe.tags.join(', ') : ''" class="tag-col"></td>
               <template x-if="!isMobileSize()">
@@ -78,7 +80,7 @@
     </div>
   </sl-split-panel>
   
-  <sl-dialog x-ref="manageRecipe" label="Create a New Meal" class="dialog">
+  <sl-dialog x-ref="manageRecipe" :label="recipeIn?.id ? 'Edit a Meal' : 'Create a New Meal'" class="dialog">
     <!-- TODO Currently the Alpine.js @submit is overriding the client side validation of Shoelace, so we need to remedy -->
     <form @submit.prevent="persistRecipe($refs.manageRecipe)">
       <sl-input placeholder="Meal Name" clearable="true" required="true"
@@ -92,6 +94,7 @@
       
       <div class="field-margin-bottom">
         Tags:
+        <!-- Use this on various inputs to handle the Enter key: @keyup.enter= -->
         <sl-input placeholder="New Tag" pill autocapitalize="words" autocorrect="on"
                   x-model="tagIn" class="add-tag-input">
           <sl-icon name="plus-circle" slot="suffix"
@@ -102,7 +105,7 @@
         </template>
         <template x-for="(tag, index) in tags" :key="tag">
           <sl-tag removable pill size="large" x-text="tag"
-                  @sl-remove="deleteTag(index)"
+                  @sl-remove="deleteTag(index, tag)"
                   @click="selectTag(recipeIn, tag)"
                   :variant="recipeIn.tags.indexOf(tag) === -1 ? 'neutral' : 'primary'"></sl-tag>
         </template>

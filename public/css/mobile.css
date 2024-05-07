@@ -7,6 +7,10 @@
     font-size: 80%;
   }
   
+  .search-input {
+    max-width: 150px;
+  }
+  
   .hide-on-mobile {
     display: none;
   }

@@ -1,5 +1,7 @@
 var state = {
   bodyReady: false,
+  searchIn: '',
+  searchCount: null,
   recipes: [],
   recipeIn: {},
   tags: [],
@@ -35,7 +37,7 @@ function shoelaceInit() {
 function resetRecipeIn(htmlEditor, replaceWith) {
   if (replaceWith) {
     // Clone so resetting/editing the fields doesn't update the table before doing a save
-    state.recipeIn = cloneObject(replaceWith);
+    state.recipeIn = JSON.parse(JSON.stringify(replaceWith));
   }
   else {
     state.recipeIn = {
@@ -63,7 +65,7 @@ function getAllRecipes(sortOrder) {
 }
 
 function persistRecipe(dialog) {
-  const call = state.recipeIn.id ? updateRecipeAPI : saveRecipeAPI;
+  const call = state.recipeIn.id ? updateRecipeAPI : createRecipeAPI;
   
   console.log("Save/update recipe", state.recipeIn);
   
@@ -125,8 +127,10 @@ function addTag(recipeObj) {
       return;
     }
     
-    // TODO Persist new tag to the API
+    // Persist new tag to the API and locally
     state.tags.push(state.tagIn);
+    state.tags = state.tags.sort();
+    updateTagsAPI(state.tags);
     
     // Add as a selection to our recipe
     selectTag(recipeObj, state.tagIn);
@@ -147,11 +151,30 @@ function selectTag(recipeObj, tag) {
   }
 }
 
-function deleteTag(index) {
-  // TODO Nicer looking confirm? Make a generic dialog with sl-dialog and a util function to show it?
-  if (window.confirm("Are you sure you want to delete this tag?")) {
-    // TODO Should removing a tag update all Recipes to clear it too?
-    // TODO Persist tag removal to the API
+function deleteTag(index, tag) {
+  // Determine how many recipes use the tag we want to delete
+  const recipeUsedCount = state.recipes.filter(recipe => recipe.tags.includes(tag)).length;
+  
+  if (window.confirm("Are you sure you want to delete this tag? It is used in " + recipeUsedCount + " recipes.")) {
+    // Remove the tag from our available options
     state.tags.splice(index, 1);
+    updateTagsAPI(state.tags);
+    
+    // Clean up any related recipes that still have the tag
+    state.recipes.forEach(recipe => {
+      const foundAt = recipe.tags.indexOf(tag);
+      if (foundAt !== -1) {
+        recipe.tags.splice(foundAt, 1);
+        updateRecipeAPI(recipe);
+      }
+    });
   }
+}
+
+function matchesSearch(recipeObj, searchText) {
+  if (searchText && typeof searchText === 'string' && searchText.trim().length > 0) {
+    return recipeObj.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+           recipeObj.tags.filter(tag => tag.toLowerCase().includes(searchText.toLowerCase())).length > 0;
+  }
+  return true;
 }
