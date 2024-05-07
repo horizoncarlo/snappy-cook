@@ -11,6 +11,11 @@
     max-width: 150px;
   }
   
+  .week-day {
+    width: 100%;
+    height: fit-content;
+  }
+  
   .hide-on-mobile {
     display: none;
   }

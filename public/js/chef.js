@@ -6,10 +6,13 @@ var state = {
   recipeIn: {},
   tags: [],
   tagIn: '',
+  week: [],
+  dayIn: {}
 }
 
 function init() {
   resetRecipeIn();
+  setupWeekdays();
   
   if (isMobileSize()) {
     addCSSLink('mobile-css', './css/mobile.css');
@@ -32,6 +35,28 @@ function alpineInit() {
 function shoelaceInit() {
   getAllRecipes('', true);
   getAllTags();
+}
+
+function setupWeekdays() {
+  state.week = Array(7).fill().map(() => ({
+    dayName: '',
+    dayNumber: 0,
+    recipe: '',
+    tags: []
+  }));
+  
+  let today = new Date();
+  for (let i = 0; i < state.week.length; i++) {
+    state.week[i].dayName =
+      today.toLocaleDateString('en', {
+        weekday: 'long'
+      });
+    state.week[i].dayNumber =
+      today.toLocaleDateString('en', {
+        day: 'numeric'
+      });
+    today.setDate(today.getDate() + 1);
+  }
 }
 
 function resetRecipeIn(htmlEditor, replaceWith) {
@@ -65,6 +90,13 @@ function getAllRecipes(sortOrder) {
 }
 
 function persistRecipe(dialog) {
+  // Validate the incoming data
+  if (!state.recipeIn.name || typeof state.recipeIn.name !== 'string' ||
+      state.recipeIn.name.trim().length <= 0) {
+    notifyError('Meal Name is required');
+    return;
+  }
+  
   const call = state.recipeIn.id ? updateRecipeAPI : createRecipeAPI;
   
   console.log("Save/update recipe", state.recipeIn);
@@ -133,7 +165,9 @@ function addTag(recipeObj) {
     updateTagsAPI(state.tags);
     
     // Add as a selection to our recipe
-    selectTag(recipeObj, state.tagIn);
+    if (recipeObj) {
+      selectTag(recipeObj, state.tagIn);
+    }
     
     // Reset our tag input after
     state.tagIn = '';
