@@ -80,7 +80,7 @@
         &nbsp;
         <sl-button title="Redo entire week" class="fright" @click="redoWeek()">
           <sl-icon name="dice-3"></sl-icon>
-          Redo
+          Redo All
         </sl-button>
       </div>
       <template x-for="day in week" :key="day.dayNumber">
@@ -127,11 +127,11 @@
     
     <div class="field-margin-bottom">
       <sl-icon name="bookmarks"></sl-icon>&nbsp;Tags:
-      <sl-input placeholder="Add Tag" pill autocapitalize="words" autocorrect="on"
+      <sl-input x-ref="addTagRecipe" placeholder="Add Tag" pill autocapitalize="words" autocorrect="on"
                 x-model="tagIn" class="add-tag-input"
                 @keyup.enter="addTag(recipeIn)">
         <sl-icon name="plus-circle" slot="suffix"
-                  @click="addTag(recipeIn)"></sl-icon>
+                  @click="addTag(recipeIn); $refs.addTagRecipe.focus()"></sl-icon>
       </sl-input>
       <template x-if="isMobileSize()">
         <br/>
@@ -155,12 +155,12 @@
   
   <sl-dialog x-ref="manageTags" :label="'Manage Tags for ' + dayIn.dayName + ' (' + dayIn.tags?.length + ' Tags)'" class="dialog">
     <sl-icon name="bookmarks"></sl-icon>&nbsp;Tags:
-    <sl-input placeholder="Add Tag" pill :autofocus="!isMobileSize()"
+    <sl-input x-ref="addTagDay" placeholder="Add Tag" pill :autofocus="!isMobileSize()"
               autocapitalize="words" autocorrect="on"
               x-model="tagIn" class="add-tag-input"
               @keyup.enter="addTag(dayIn)">
       <sl-icon name="plus-circle" slot="suffix"
-               @click="addTag(dayIn)"></sl-icon>
+               @click="addTag(dayIn); $refs.addTagDay.focus()"></sl-icon>
     </sl-input>
     <template x-if="isMobileSize()">
       <br/>
