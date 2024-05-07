@@ -155,11 +155,19 @@ trix-toolbar .trix-button-group--file-tools {
   content: ' (today)';
 }
 
-.day-drop {
+.day-drop, .day-redo {
   display: inline-block;
-  width: calc(100% - 50px);
+}
+
+.day-drop {
+  width: calc(100% - 75px);
   margin-left: 10px;
   margin-top: 10px;
+}
+
+.day-redo {
+  width: 60px;
+  text-align: center;
 }
 
 .day-tag {

@@ -43,6 +43,10 @@ async function getAllTagsAPI() {
   return _get(API_URL + 'tags');
 }
 
+async function getAllDaysAPI() {
+  return _get(API_URL + 'days');
+}
+
 let lastSortCol = 'name';
 let lastSortOrder = ''; // Ascending sort, descending is '-'
 async function getAllRecipesAPI(sortCol, initSort) {
@@ -74,14 +78,30 @@ async function createRecipeAPI(recipe) {
   return _post(API_URL + 'recipes', recipe);
 }
 
-async function updateTagsAPI(tags) {
-  return _put(API_URL + 'tags', { all: tags });
-}
-
 async function updateRecipeAPI(recipe) {
   return _put(API_URL + 'recipes/' + recipe.id, recipe);
 }
 
 async function deleteRecipeAPI(deleteId) {
   return _delete(API_URL + 'recipes/' + deleteId);
+}
+
+async function updateTagsAPI(tags) {
+  return _put(API_URL + 'tags', { all: tags });
+}
+
+async function createDayAPI(day) {
+  const dayClone = JSON.parse(JSON.stringify(day));
+  delete dayClone.index;
+  return _post(API_URL + 'days', dayClone);
+}
+
+async function updateDayAPI(day) {
+  const dayClone = JSON.parse(JSON.stringify(day));
+  delete dayClone.index;
+  return _put(API_URL + 'days/' + day.id, day);
+}
+
+async function deleteDayAPI(deleteId) {
+  return _delete(API_URL + 'days/' + deleteId);
 }

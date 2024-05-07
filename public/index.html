@@ -88,16 +88,19 @@
       <template x-for="day in week" :key="day.dayNumber">
         <div class="week-day">
           <div x-text="day.dayNumber + ' ' + day.dayName" class="day-header" :class="{ 'day-current': new Date().getDate() == day.dayNumber}"></div>
-          <select x-model="day.recipe" class="day-drop" @change="changeDayRecipe($event)">
+          <select x-model="day.recipeId" class="day-drop" @change.debounce.1000ms="persistDay(day)">
             <option :key="''" :value="''">-- Select --</option>
             <template x-for="recipe in recipes">
               <option :key="recipe.id" :value="recipe.id" x-text="recipe.name"
-                      :selected="day.recipe === recipe.id"></option>
+                      :selected="day.recipeId === recipe.id"></option>
             </template>
           </select>
           
-          <sl-icon-button name="dice-6" title="Redo Recipe"
-                          @click="redoDay(day)"></sl-icon-button>
+          <div class="day-redo">
+            <sl-icon-button name="dice-6" title="Redo day"
+                            @click="redoDay(day)"
+                            @click.debounce.1000ms="persistDay(day)"></sl-icon-button>
+          </div>
           
           <div class="day-tag">
             <sl-tag pill size="large" title="Specify tags for this day"
@@ -111,7 +114,6 @@
   </sl-split-panel>
   
   <sl-dialog x-ref="manageRecipe" :label="recipeIn?.id ? 'Edit a Meal' : 'Create a New Meal'" class="dialog">
-    <!-- TODO Currently the Alpine.js @submit is overriding the client side validation of Shoelace, so we need to remedy -->
     <sl-input placeholder="Meal Name" clearable="true" required="true"
               autocapitalize="words" autocorrect="on"
               :autofocus="!isMobileSize()"
@@ -124,7 +126,6 @@
     
     <div class="field-margin-bottom">
       <sl-icon name="bookmarks"></sl-icon>&nbsp;Tags:
-      <!-- Use this on various inputs to handle the Enter key: @keyup.enter= -->
       <sl-input placeholder="New Tag" pill autocapitalize="words" autocorrect="on"
                 x-model="tagIn" class="add-tag-input">
         <sl-icon name="plus-circle" slot="suffix"
@@ -150,7 +151,7 @@
     </div>
   </sl-dialog>
   
-  <sl-dialog x-ref="manageTags" :label="'Manage Tags for Day (' + dayIn.tags?.length + ' Tags)'" class="dialog">
+  <sl-dialog x-ref="manageTags" :label="'Manage Tags for ' + dayIn.dayName + ' (' + dayIn.tags?.length + ' Tags)'" class="dialog">
     <sl-icon name="bookmarks"></sl-icon>&nbsp;Tags:
     <!--TODO Use this on various inputs to handle the Enter key: @keyup.enter= -->
     <sl-input placeholder="New Tag" pill autocapitalize="words" autocorrect="on"
@@ -169,8 +170,9 @@
     </template>
     
     <div slot="footer">
-      <!-- TTODO Save days properly with tags -->
-      <sl-button variant="primary" @click="persistDay(); $refs.manageTags.hide()">
+      <sl-button type="reset" variant="default" class="fleft"
+                 @click="dayIn.tags.length = 0">Reset</sl-button>
+      <sl-button variant="primary" @click="persistDay(dayIn); $refs.manageTags.hide()">
         <sl-icon slot="prefix" name="floppy"></sl-icon> Save
       </sl-button>
     </div>

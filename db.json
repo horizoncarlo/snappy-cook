@@ -3,43 +3,108 @@
     {
       "id": "067f",
       "name": "Testing",
-      "notes": "<div>Reading but in <strong>BOLD</strong></div>",
+      "notes": "<div>Reading but in <strong>BOLD aaa</strong></div>",
       "tags": [
-        "Beef"
+        "Boiled",
+        "Fast"
       ],
-      "changedDate": "2024-05-04T05:28:01.170Z"
+      "changedDate": "2024-05-07T04:44:45.328Z"
     },
     {
       "id": "a3e4",
-      "changedDate": "2024-05-04T13:46:00.792Z",
+      "changedDate": "2024-05-07T02:44:26.560Z",
       "name": "Hey",
       "notes": "",
       "tags": [
-        "Fast"
+        "Goat",
+        "Boiled",
+        "Fast",
+        "Salad"
       ]
     },
     {
       "id": "e375",
-      "changedDate": "2024-05-04T13:47:30.108Z",
+      "changedDate": "2024-05-07T04:25:57.468Z",
       "name": "Tag Test",
       "notes": "<div>Did it work?</div>",
       "tags": [
-        "Beef",
-        "Fast",
-        "Wrong Order"
+        "Salad",
+        "Fast"
       ]
     }
   ],
   "tags": {
     "all": [
-      "Beef",
-      "Wrong Order",
-      "Fast"
+      "Boiled",
+      "Fast",
+      "Flash",
+      "Goat",
+      "Salad",
+      "Slow Cooker"
     ]
   },
-  "meal-plan": {
-    "01-10-2024": {
-      "recipeId": "1"
+  "days": [
+    {
+      "id": "ewd1",
+      "dayName": "Thursday",
+      "dayNumber": 9,
+      "recipeId": "e375",
+      "tags": [
+        "Salad",
+        "Goat"
+      ]
+    },
+    {
+      "id": "0d69",
+      "dayName": "Wednesday",
+      "dayNumber": 8,
+      "recipeId": "a3e4",
+      "tags": [
+        "Boiled",
+        "Flash",
+        "Goat"
+      ]
+    },
+    {
+      "id": "09fc",
+      "dayName": "Tuesday",
+      "dayNumber": 7,
+      "recipeId": "a3e4",
+      "tags": [
+        "Boiled",
+        "Fast"
+      ]
+    },
+    {
+      "id": "a5e2",
+      "dayName": "Friday",
+      "dayNumber": 10,
+      "recipeId": "e375",
+      "tags": [
+        "Boiled",
+        "Fast"
+      ]
+    },
+    {
+      "id": "4ea6",
+      "dayName": "Saturday",
+      "dayNumber": 11,
+      "recipeId": "e375",
+      "tags": []
+    },
+    {
+      "id": "add7",
+      "dayName": "Sunday",
+      "dayNumber": 12,
+      "recipeId": "e375",
+      "tags": []
+    },
+    {
+      "id": "92a4",
+      "dayName": "Monday",
+      "dayNumber": 13,
+      "recipeId": "a3e4",
+      "tags": []
     }
-  }
+  ]
 }
