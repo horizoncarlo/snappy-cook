@@ -1,7 +1,7 @@
 # Snappy Cook
 Recipe storage app plus weekly meal planner, with customizable tags and parameters.
 
-<a href="./example-setup.jpg" target="_blank"><img style="width: 400px;" src="./example-setup.jpg"/></a>
+<a href="./example-setup.png" target="_blank"><img style="width: 800px;" src="./example-setup.png"/></a>
 
 The idea is to gather a bunch of recipes - either typing them in manually or pasting HTML from random blogs and websites. This will be a bit of front loaded effort depending on your existing recipe book. Specify your own custom tags (like: Chicken, Taco, Inexpensive, Frozen, Basement Fridge) for each recipe. Then you can set a similar set of tag requirements on each day of the week and the app will randomly assign matching recipes to those days. You can override or re-roll a day manually if you want.
 
