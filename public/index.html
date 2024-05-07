@@ -53,7 +53,8 @@
         </thead>
         <tbody>
           <template x-for="recipe in recipes" :key="recipe.id">
-            <tr x-show="matchesSearch(recipe, searchIn)">
+            <tr x-show="matchesSearch(recipe, searchIn)"
+                @dblclick="resetRecipeIn($refs.htmlEditor.editor, recipe); $refs.manageRecipe.show();">
               <td x-text="recipe.name"></td>
               <td x-text="recipe.tags ? recipe.tags.join(', ') : ''" class="tag-col"></td>
               <template x-if="!isMobileSize()">
@@ -65,7 +66,6 @@
                 <td><sl-relative-time :date="recipe.changedDate" sync="true" format="narrow"></sl-relative-time></td>
               </template>
               <td class="center">
-                <!-- TODO Touch and hold to edit on mobile -->
                 <sl-icon-button @click="resetRecipeIn($refs.htmlEditor.editor, recipe); $refs.manageRecipe.show();" name="pencil-square" title="Edit Recipe"></sl-icon-button>
                 &nbsp;
                 <sl-icon-button @click="deleteRecipe(recipe.id)" name="trash3" title="Delete Recipe"></sl-icon-button>
@@ -79,28 +79,27 @@
     <div slot="end" class="split-panel">
       <div class="week-header">
         <span>Meal Plan for the Week</span>
-        <!-- TTODO Randomize week on click -->
         &nbsp;
-        <sl-button title="Redo entire week" class="fright">
+        <sl-button title="Redo entire week" class="fright" @click="redoWeek()">
           <sl-icon name="dice-3"></sl-icon>
           Redo
         </sl-button>
       </div>
       <template x-for="day in week" :key="day.dayNumber">
         <div class="week-day">
-          <div x-text="day.dayNumber + ' ' + day.dayName" class="day-header" :class="{ 'day-current': new Date().getDay() == day.dayNumber}"></div>
-          <sl-select class="day-drop">
-            <!-- TTODO Fix dropdown for recipes -->
-            <template x-for="(recipe, index) in recipes">
-              <sl-option x-model="day.recipe" x-text="recipe.name"></sl-option>
+          <div x-text="day.dayNumber + ' ' + day.dayName" class="day-header" :class="{ 'day-current': new Date().getDate() == day.dayNumber}"></div>
+          <select x-model="day.recipe" class="day-drop" @change="changeDayRecipe($event)">
+            <option :key="''" :value="''">-- Select --</option>
+            <template x-for="recipe in recipes">
+              <option :key="recipe.id" :value="recipe.id" x-text="recipe.name"
+                      :selected="day.recipe === recipe.id"></option>
             </template>
-          </sl-select>
+          </select>
           
-          <!-- TTODO Randomize day on click -->
-          <sl-icon-button name="dice-6" title="Redo Recipe"></sl-icon-button>
+          <sl-icon-button name="dice-6" title="Redo Recipe"
+                          @click="redoDay(day)"></sl-icon-button>
           
           <div class="day-tag">
-            <!-- TTODO Open a dialog for tags. Also show count in brackets properly -->
             <sl-tag pill size="large" title="Specify tags for this day"
                     @click="dayIn = JSON.parse(JSON.stringify(day)); $refs.manageTags.show()">
               <span x-text="'Tags (' + day.tags.length + ')'"></span>
@@ -142,7 +141,6 @@
       </template>
     </div>
     
-    <!-- TODO Buttons are put to the left because they are inside a form, instead of natural right formatting. Probably just drop the form concept -->
     <div slot="footer">
       <sl-button type="reset" variant="default" class="fleft"
                  @click="recipeIn.tags.length = 0">Reset</sl-button>
@@ -154,7 +152,7 @@
   
   <sl-dialog x-ref="manageTags" :label="'Manage Tags for Day (' + dayIn.tags?.length + ' Tags)'" class="dialog">
     <sl-icon name="bookmarks"></sl-icon>&nbsp;Tags:
-    <!-- Use this on various inputs to handle the Enter key: @keyup.enter= -->
+    <!--TODO Use this on various inputs to handle the Enter key: @keyup.enter= -->
     <sl-input placeholder="New Tag" pill autocapitalize="words" autocorrect="on"
               x-model="tagIn" class="add-tag-input">
       <sl-icon name="plus-circle" slot="suffix"
@@ -171,7 +169,7 @@
     </template>
     
     <div slot="footer">
-      <!-- TODO Save days properly with tags -->
+      <!-- TTODO Save days properly with tags -->
       <sl-button variant="primary">
         <sl-icon slot="prefix" name="floppy"></sl-icon> Save
       </sl-button>

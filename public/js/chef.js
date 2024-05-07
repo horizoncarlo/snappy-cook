@@ -212,3 +212,20 @@ function matchesSearch(recipeObj, searchText) {
   }
   return true;
 }
+
+function redoWeek() {
+  state.week.map(day => {
+    redoDay(day);
+  });
+}
+
+function redoDay(day) {
+  // TTODO Filter by tags here
+  // TTODO Don't allow the last day to be randomly chosen again
+  const randIndex = randomRange(0, state.recipes.length-1);
+  day.recipe = state.recipes[randIndex].id;
+}
+
+function changeDayRecipe(e) {
+  console.error("TEST CHANGE", e); // TTODO Save/persist recipe change
+}
