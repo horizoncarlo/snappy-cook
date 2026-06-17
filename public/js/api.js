@@ -1,4 +1,4 @@
-const API_URL = `http://${window.location.host}/`;
+const API_URL = `${window.location.protocol}//${window.location.host}/`;
 
 // #region Generic underlying functions
 function _get(url) { return _fetchWithLoading(url, 'GET'); }
